@@ -18,7 +18,7 @@ env.Append(CPPPATH=Dir('#/src/external/cMsg-3.6/src/libsrc++').srcnode().abspath
 env.SConscript('cMsg-3.6/SConstruct',exports="env debug")
 
 #ROOTSPY
-env.Append(CPPPATH=Dir('#/src/external/RootSpy/src/libRootSpy').srcnode().abspath)
-env.Append(CPPPATH=Dir('#/src/external/RootSpy/src/libRootSpy-client').srcnode().abspath)
-env.SConscript('RootSpy/SConstruct',exports='env debug')
+#env.Append(CPPPATH=Dir('#/src/external/RootSpy/src/libRootSpy').srcnode().abspath)
+#env.Append(CPPPATH=Dir('#/src/external/RootSpy/src/libRootSpy-client').srcnode().abspath)
+#env.SConscript('RootSpy/SConstruct',exports='env debug')
    
