@@ -76,7 +76,7 @@ void TranslationTable::ReadTranslationTableHALLD() {
 		TranslationTable::csc_t csc;
 		csc.crate = 0;
 		csc.slot = 1;
-		csc.channel = ii;
+		csc.channel = ii+1;
 
 		TranslationTable::ChannelInfo ch;
 		ch.det_sys = TranslationTable::HallDCAL;
