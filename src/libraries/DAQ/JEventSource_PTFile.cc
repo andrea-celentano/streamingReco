@@ -76,6 +76,7 @@ void JEventSourcePTFile::GetEvent(std::shared_ptr<JEvent> event) {
 
 	curRunNumber = ptReader->runNumber();
 	ptEvent = new Event<sample::uncompressed>(*it_ptTimeSlice++);
+	m_pos += ptEvent->size(); // try and keep track of position in file so we can report progress
 
 	//TODO: allow for a user-defined run number
 	event->SetRunNumber(curRunNumber);
@@ -94,14 +95,14 @@ void JEventSourcePTFile::GetEvent(std::shared_ptr<JEvent> event) {
 		auto len = ptReader->nEvents();
 		
 		// Calculate rate we are reading in MB/s
-		static auto last_pos = ptReader->tellg();
+		static auto last_pos = m_pos;
 		static auto t_last = std::chrono::steady_clock::now();
 		auto t_now = std::chrono::steady_clock::now();
 		auto t_diff = std::chrono::duration_cast<std::chrono::microseconds>(t_now-t_last).count();
 		static double MB_per_sec = 0.0;
 		if( t_diff>=1000000 ){
 			
-			auto pos = ptReader->tellg();
+			auto pos = m_pos;
 			auto bytes_diff = pos - last_pos;
 			MB_per_sec = (double)bytes_diff/(double)t_diff;
 

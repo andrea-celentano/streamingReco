@@ -11,13 +11,14 @@
 
 #include "DAQ/TridasEvent.h"
 //TRIDAS headers
-#include <TRIDAS/ptfile_reader.hpp>
-#include <TRIDAS/s_dataformat_bdx.hpp>
+#include <tools/ptfile_reader.hpp>
+#include <packages/DataFormats/s_dataformat_bdx.hpp>
 using namespace tridas::post_trigger;
 
 class JEventSourcePTFile: public JEventSource {
 
 	int curRunNumber, curEventNumber, curEventType;
+	uint32_t m_pos = 0;
 
 	PtFileReader<sample::uncompressed> *ptReader;
 	//ITerator on file, each instance is a timeslice
