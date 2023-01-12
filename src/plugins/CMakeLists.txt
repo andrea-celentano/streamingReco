@@ -1,0 +1,10 @@
+cmake_minimum_required (VERSION 3.16)
+
+
+add_subdirectory(HallDCal_beam_trigger)
+add_subdirectory(HallDCal_cosmics)
+add_subdirectory(HallDCal_cosmics_trigger)
+add_subdirectory(PTFileSource)
+add_subdirectory(TriggerMetadata)
+
+
