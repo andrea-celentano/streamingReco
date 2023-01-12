@@ -12,10 +12,10 @@ for lib in libs:
 env.SharedLibrary(source=src,target='#/lib/streamingRecoExt') 
 
 #CMSG
-env.Append(CPPPATH=Dir('#/src/external/cMsg-3.6/src/regexp').srcnode().abspath)
-env.Append(CPPPATH=Dir('#/src/external/cMsg-3.6/src/libsrc').srcnode().abspath)
-env.Append(CPPPATH=Dir('#/src/external/cMsg-3.6/src/libsrc++').srcnode().abspath)
-env.SConscript('cMsg-3.6/SConstruct',exports="env debug")
+#env.Append(CPPPATH=Dir('#/src/external/cMsg-3.6/src/regexp').srcnode().abspath)
+#env.Append(CPPPATH=Dir('#/src/external/cMsg-3.6/src/libsrc').srcnode().abspath)
+#env.Append(CPPPATH=Dir('#/src/external/cMsg-3.6/src/libsrc++').srcnode().abspath)
+#env.SConscript('cMsg-3.6/SConstruct',exports="env debug")
 
 #ROOTSPY
 #env.Append(CPPPATH=Dir('#/src/external/RootSpy/src/libRootSpy').srcnode().abspath)
