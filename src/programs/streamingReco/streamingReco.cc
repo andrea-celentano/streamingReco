@@ -84,11 +84,9 @@ void PrintUsage() {
 void PrintVersion() {
 	/// Prints JANA version information to stdout, for use by the CLI.
 
-	std::cout << "          JANA version: " << JVersion::GetVersion()  << std::endl;
-	std::cout << "        JANA ID string: " << JVersion::GetIDstring() << std::endl;
-	std::cout << "     JANA git revision: " << JVersion::GetRevision() << std::endl;
-	std::cout << "JANA last changed date: " << JVersion::GetDate()     << std::endl;
-	std::cout << "           JANA source: " << JVersion::GetSource()   << std::endl;
+	std::cout << "          JANA version: " << JVersion::GetVersion()    << std::endl;
+	std::cout << "     JANA git revision: " << JVersion::GetCommitHash() << std::endl;
+	std::cout << "JANA last changed date: " << JVersion::GetCommitDate() << std::endl;
 }
 
 
@@ -121,7 +119,7 @@ int Execute(UserOptions& options) {
 	}
 	else {  // All modes which require a JApplication
 
-	    std::cout << "JANA " << JVersion::GetVersion() << " [" << JVersion::GetRevision() << "]" << std::endl;
+	    std::cout << "JANA " << JVersion::GetVersion() << " [" << JVersion::GetCommitHash() << "]" << std::endl;
 		if (options.flags[LoadConfigs]) {
 			// If the user specified an external config file, we should definitely use that
 			try {
