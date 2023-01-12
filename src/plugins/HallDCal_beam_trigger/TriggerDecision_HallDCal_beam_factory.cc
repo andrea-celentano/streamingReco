@@ -5,7 +5,7 @@
 
 #include <HallD/HallDCalHit.h>
 #include <DAQ/faWaveboardHit.h>
-#include <TriggerDecision_HallDCal_beam_factory.h>
+#include "TriggerDecision_HallDCal_beam_factory.h"
 #include <addRecoFactoriesGenerators.h>
 
 
