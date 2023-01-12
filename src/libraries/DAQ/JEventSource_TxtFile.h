@@ -11,7 +11,7 @@
 
 #include "DAQ/TridasEvent.h"
 //TRIDAS headers
-#include <TRIDAS/ptfile_reader.hpp>
+#include <tools/ptfile_reader.hpp>
 using namespace tridas::post_trigger;
 
 class JEventSourceTxtFile: public JEventSource {
