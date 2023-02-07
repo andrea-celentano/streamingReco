@@ -1,4 +1,4 @@
-#pragma once
+
 #include"FT/hdbscandir/AllMetrics.h"
 #include<vector>
 #include<cmath>
