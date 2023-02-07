@@ -1,4 +1,7 @@
 cmake_minimum_required (VERSION 3.16)
+cmake_policy(SET CMP0028 NEW)
+cmake_policy(SET CMP0074 NEW)
+
 project (streamingReco)
 
 # Include JANA by default
@@ -65,6 +68,7 @@ endforeach()
 
 add_subdirectory (src/libraries)
 add_subdirectory (src/plugins)
+add_subdirectory (src/external/TRIDAS)
 add_subdirectory (src/programs/streamingReco)
 
 
