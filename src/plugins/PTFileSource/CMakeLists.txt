@@ -6,7 +6,8 @@ project(PTFileSource)
 file(GLOB LIB_SRC_FILES *.cc *.cpp *.c)
 file(GLOB HEADER_FILES *.h *.hh *.hpp)
 
+
 add_library(${PROJECT_NAME} SHARED)
 target_sources(${PROJECT_NAME} PRIVATE ${LIB_SRC_FILES})
 set_target_properties(${PROJECT_NAME} PROPERTIES PREFIX "")
-
+target_include_directories(${PROJECT_NAME} PRIVATE $ENV{CCDB_HOME}/include)
