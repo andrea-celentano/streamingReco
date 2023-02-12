@@ -21,6 +21,7 @@ target_link_directories(${PROJECT_NAME} PRIVATE /usr/clas12/streaming/JANA2/lib)
 
 message( STATUS 'CCDB_HOME=$ENV{CCDB_HOME}')
 target_link_directories(${PROJECT_NAME} PRIVATE $ENV{CCDB_HOME}/lib /usr/lib64/mysql )
+target_include_directories(${PROJECT_NAME} PRIVATE $ENV{CCDB_HOME}/include)
 target_link_libraries(${PROJECT_NAME} CCDB_lib CCDB_sqlite mysqlclient)
 
 target_link_libraries(${PROJECT_NAME} FT DAQ TT HallD external_TRIDAS JANA streamingreco_system)
