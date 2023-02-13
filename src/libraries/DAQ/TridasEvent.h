@@ -19,7 +19,7 @@ enum fadcHit_TYPE {
 
 struct fadcHit {
 	uint8_t crate, slot, channel;
-	T4nsec time;
+	T5nsec time;
 	float charge;  				//Charge corrected by ADC pedestals
 	std::vector<uint16_t> data; //I assume the hits are sampled with 16bit digitizers at maximum
 

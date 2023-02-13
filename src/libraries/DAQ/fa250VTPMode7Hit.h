@@ -24,7 +24,7 @@ public:
 	fa250VTPMode7Hit(){};
 	virtual ~fa250VTPMode7Hit(){};
 
-	T4nsec m_time; //in ns
+	T5nsec m_time; //in ns
 	float m_charge; //as reported from the waveboard
 
 	virtual void Summarize(JObjectSummary& summary) const {

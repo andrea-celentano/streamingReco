@@ -61,7 +61,7 @@ void fa250VTPMode7Hit_factory::Process(const std::shared_ptr<const JEvent> &aEve
 	 *Hence, I take the earliest hit time and remove it from the all hits.
 	 *Note that I loop on all hits in tridas_event, hence even if I mix fa250VTPMode7Hit and waveveboardHit, that is ok.
 	 */
-	T4nsec firstTime = tridas_event->hits[0].time;
+	T5nsec firstTime = tridas_event->hits[0].time;
 	for (auto hit : tridas_event->hits) {
 		if (hit.time < firstTime) firstTime = hit.time;
 	}
