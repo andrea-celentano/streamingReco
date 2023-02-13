@@ -33,13 +33,23 @@ void JEventSourcePTFile::Open() {
 	LOG << "       Data Card Size: " << ptReader->datacardSize() << LOG_END;
 	LOG << "===================================================" << LOG_END;
 
-	//point to the first time slice
-	it_ptReader = ptReader->begin();
-	nEventsTimeSlice = (*it_ptReader).nEvents();
+	try{
+		//point to the first time slice
+		_DBG__;
+		it_ptReader = ptReader->begin();
+		_DBG__;
+		nEventsTimeSlice = (*it_ptReader).nEvents();
 
-	//Create a new time slice
-	ptTimeSlice = new TimeSlice<sample::uncompressed>(*it_ptReader);
-	it_ptTimeSlice = ptTimeSlice->begin();
+		//Create a new time slice
+		_DBG__;
+		ptTimeSlice = new TimeSlice<sample::uncompressed>(*it_ptReader);
+		_DBG__;
+		it_ptTimeSlice = ptTimeSlice->begin();
+	}catch(...){
+		LOG << "Exception while trying to grab initial time slice from PT file! This is fatal so quitting now ..." << LOG_END;
+		japp->Quit(true);
+		return;
+	}
 
 	//currEventTimeSlice = 0;
 	LOG << "JEventSourcePTFile creator DONE: " << this << LOG_END;
@@ -147,7 +157,7 @@ void JEventSourcePTFile::GetEvent(std::shared_ptr<JEvent> event) {
 		fhit.channel = hit.frameHeader(0).PMTID;
 
 		//add the time
-		T4nsec t(hit.frameHeader(0).T4ns);
+		T5nsec t(hit.frameHeader(0).T5ns);
 		fhit.time = t;
 
 		//add the charge
