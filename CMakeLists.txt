@@ -18,6 +18,9 @@ endif()
 # Enable -fPIC for all targets
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 
+# Embedd link paths for shared libraries, plugins, executables
+set(CMAKE_INSTALL_RPATH_USE_LINK_PATH True)
+
 # Install to the top directory by default
 if( ${CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT} )
     set(CMAKE_INSTALL_PREFIX ${CMAKE_SOURCE_DIR} CACHE PATH "Install in top directory by default" FORCE)
@@ -25,7 +28,7 @@ endif()
 
 # Default plugins installation directory is 'plugins'
 if(NOT DEFINED PLUGIN_OUTPUT_DIRECTORY)
-    set(PLUGIN_OUTPUT_DIRECTORY "/plugins")
+    set(PLUGIN_OUTPUT_DIRECTORY "${CMAKE_INSTALL_PREFIX}/plugins")
     message(STATUS "${CMAKE_PROJECT_NAME}: Set default PLUGIN_OUTPUT_DIRECTORY")
 endif()
 message(STATUS "${CMAKE_PROJECT_NAME}: PLUGIN_OUTPUT_DIRECTORY: ${PLUGIN_OUTPUT_DIRECTORY}")
@@ -44,20 +47,23 @@ message(STATUS "${CMAKE_PROJECT_NAME}: JANA2 CMake   : ${JANA_DIR}")
 message(STATUS "${CMAKE_PROJECT_NAME}: JANA2 includes: ${JANA_INCLUDE_DIR}")
 message(STATUS "${CMAKE_PROJECT_NAME}: JANA2 library : ${JANA_LIBRARY}")
 
-#FIXME This should not be hardwired
-set(TRIDAS_HOME /usr/clas12/streaming/work/2022.12.15.JANA2_TriDAS/tridas-core)
-set(CCDB_HOME /usr/clas12/streaming/work/2022.12.15.JANA2_TriDAS/CCDB)
+# TRIDAS_HOME points to install directory. Source is one directory up
+# CCDB points to install and source directory which are the same
+set(TRIDAS_HOME $ENV{TRIDAS_HOME})
+set(CCDB_HOME $ENV{CCDB_HOME})
+set (CCDB_INCLUDE_DIR ${CCDB_HOME}/include/)
+set (CCDB_LIBDIR ${CCDB_HOME}/lib)
 
 set(INCLUDE_DIRS, "")
 list(APPEND INCLUDE_DIRS ${CMAKE_SOURCE_DIR}/src/libraries ${CMAKE_SOURCE_DIR}/src/external)
-list(APPEND INCLUDE_DIRS ${TRIDAS_HOME} ${CMAKE_SOURCE_DIR}/src/external/TRIDAS)
+list(APPEND INCLUDE_DIRS ${TRIDAS_HOME}/.. ${TRIDAS_HOME}/../build/packages ${TRIDAS_HOME}/../packages/DataFormats ${TRIDAS_HOME}/../packages/utility)
+# list(APPEND INCLUDE_DIRS ${TRIDAS_HOME}/.. ${CMAKE_SOURCE_DIR}/src/external/TRIDAS)
 list(APPEND INCLUDE_DIRS ${JANA_INCLUDE_DIR} )
 list(APPEND INCLUDE_DIRS ${ROOT_INCLUDE_DIRS} )
 list(APPEND INCLUDE_DIRS ${CCDB_HOME}/cpp/src )
 
 
 include_directories(${INCLUDE_DIRS})
-#include_directories(${CMAKE_SOURCE_DIR}/src/libraries ${CMAKE_SOURCE_DIR}/src/external ${CMAKE_SOURCE_DIR}/src/external/TRIDAS ${JANA_INCLUDE_DIR} ${ROOT_INCLUDE_DIRS} ${TRIDAS_HOME})
 add_compile_options(-Wno-deprecated -Wno-deprecated-declarations)
 
 get_property(dirs DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY INCLUDE_DIRECTORIES)
