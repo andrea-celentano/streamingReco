@@ -56,18 +56,61 @@ TranslationTable::TranslationTable(JApplication *app, int runN) :
 
 #ifdef WORK_AROUND
 	tttype = "HALLB";
+#error WORK_AROUND is active
 #endif
 
 	if (tttype == "HALLB") {
 		ReadTranslationTableHALLB();
 	} else if (tttype == "HALLD") {
 		ReadTranslationTableHALLD();
+	} else if (tttype == "EIC2023") {
+		ReadTranslationTableEIC2023();
 	} else {
 		ostringstream strm;
 		strm << "RUNTYPE PARAMETER NOT SUPPORTED BY TranslationTable: " << tttype;
 		throw JException(strm.str());
 	}
 
+}
+void TranslationTable::ReadTranslationTableEIC2023() {
+
+	// This sets up the translation table for the EIC2023 tests.
+	// For this, there were 2 calorimeters used, a 3x3 and a
+	// 5x5. Initially they were set up in the Hall-B Counting
+	// house and then the 5x5 moved to Hall-D. At this time it is not
+	// clear if they will overlap in channels or if we can use
+	// a single translation table for both calorimeters and the
+	// two locations of the 5x5.
+	//
+	// Here is an e-mail from Sergey on Feb. 13, 2023 describing
+	// the configuration for the 3x3:
+	//
+	// Dear all,
+	// I moved FADC from slot 13 to slot 3, and installed second
+	// FADC in slot 4. Prototype channels 1-5 connected to slot 3
+	// channels 0-4, prototype channels 6-9 connected to slot 4
+	// channels 5-8. Since both FADCs are installed on the left
+	// side of the crate, use port 7001 (instead of 7002) on clondaq5.
+	//
+	// Sergey
+	//
+
+	for (int ii = 0; ii < 9; ii++) {
+		TranslationTable::csc_t csc;
+		csc.crate = 80; // empirically from HallB Coiunt House 3x3 data
+		csc.slot = (ii<=4 ? 3:4); // (see above)
+		csc.channel = ii; // (this works because of Sergey's clever cabling. See above.)
+
+		TranslationTable::ChannelInfo ch;
+		ch.det_sys = TranslationTable::EIC3x3CAL;
+		ch.EIC3x3CAL = new TranslationTable::HallDCAL_Index_t;
+		ch.EIC3x3CAL->iX=ii/3; // is this correct?
+		ch.EIC3x3CAL->iY=ii%3; // is this correct?
+
+
+		//insert into TT data - [] operator creates a new entry in map
+		Get_TT()[csc] = ch;
+	}
 }
 void TranslationTable::ReadTranslationTableHALLD() {
 

@@ -15,7 +15,7 @@ class EIC3x3CalTrack_Factory : public JFactoryT<EIC3x3CalTrack> {
 	double t_window; // (see EIC3x3CalTrack_Factory::ChangeRun)
 
 public:
-    EIC3x3CalTrack_Factory() : JFactoryT<EIC3x3CalTrack>(NAME_OF_THIS) {};
+    // EIC3x3CalTrack_Factory() : JFactoryT<EIC3x3CalTrack>(NAME_OF_THIS) {};
     void Init() override;
     void ChangeRun(const std::shared_ptr<const JEvent> &event) override;
     void Process(const std::shared_ptr<const JEvent> &event) override;

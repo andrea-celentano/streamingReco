@@ -83,7 +83,10 @@ void HallDCalHit_factory::Process(const std::shared_ptr<const JEvent> &aEvent) {
 	//Here is the important part - converting the faHit from VTPMode7 to HallDCalHit
 	for (auto faHit : faHits_fa250VTPMode7) {
 		m_channel = m_tt->getChannelInfo(faHit->m_channel);
-		if ((m_channel.det_sys == TranslationTable::HallDCAL)) {
+		// _DBG_<<"Detector Type: " << m_tt->DetectorName(m_channel.det_sys) << std::endl;
+		// _DBG_<<"crate="<<(int)faHit->m_channel.crate<<" slot="<<(int)faHit->m_channel.slot<<" channel="<<(int)faHit->m_channel.channel<<std::endl;
+		// _DBG_<<"crate="<<(int)m_channel.CSC.crate<<" slot="<<(int)m_channel.CSC.slot<<" channel="<<(int)m_channel.CSC.channel<<std::endl;
+		if ((m_channel.det_sys == TranslationTable::EIC3x3CAL)) {
 
 			//Create a new HallDCal Hit Object object
 			auto mHallDCalHit = new HallDCalHit();

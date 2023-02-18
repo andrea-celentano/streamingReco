@@ -1,5 +1,5 @@
 #include "JEventSource_PTFile.h"
-#include "TRIDAS/s_dataformat_bdx.hpp"
+// #include "TRIDAS/s_dataformat_clas12.hpp"
 #include <iostream>
 #include <chrono>
 
@@ -35,15 +35,11 @@ void JEventSourcePTFile::Open() {
 
 	try{
 		//point to the first time slice
-		_DBG__;
 		it_ptReader = ptReader->begin();
-		_DBG__;
 		nEventsTimeSlice = (*it_ptReader).nEvents();
 
 		//Create a new time slice
-		_DBG__;
 		ptTimeSlice = new TimeSlice<sample::uncompressed>(*it_ptReader);
-		_DBG__;
 		it_ptTimeSlice = ptTimeSlice->begin();
 	}catch(...){
 		LOG << "Exception while trying to grab initial time slice from PT file! This is fatal so quitting now ..." << LOG_END;
@@ -133,19 +129,19 @@ void JEventSourcePTFile::GetEvent(std::shared_ptr<JEvent> event) {
 	TridasEvent *tridasEvent = new TridasEvent();
 
 	//add the trigger word
-	tridasEvent->triggerWords.push_back(tridas::bdx::MAX_TRIGGERS_NUMBER); //currently 5
-	for (int ii = 0; ii < tridas::bdx::MAX_TRIGGERS_NUMBER; ii++) {
+	tridasEvent->triggerWords.push_back(tridas::clas12::MAX_TRIGGERS_NUMBER); //currently 5
+	for (int ii = 0; ii < tridas::clas12::MAX_TRIGGERS_NUMBER; ii++) {
 		tridasEvent->triggerWords.push_back(ptEvent->nseeds(ii));
 	}
-	tridasEvent->triggerWords.push_back(tridas::bdx::MAX_PLUGINS_NUMBER); //currently 8
-	for (int ii = 0; ii < tridas::bdx::MAX_PLUGINS_NUMBER; ii++) {
+	tridasEvent->triggerWords.push_back(tridas::clas12::MAX_PLUGINS_NUMBER); //currently 8
+	for (int ii = 0; ii < tridas::clas12::MAX_PLUGINS_NUMBER; ii++) {
 		tridasEvent->triggerWords.push_back(ptEvent->plugin_nseeds(ii));
 	}
-	for (int ii = 0; ii < tridas::bdx::MAX_PLUGINS_NUMBER; ii++) {
+	for (int ii = 0; ii < tridas::clas12::MAX_PLUGINS_NUMBER; ii++) {
 		tridasEvent->triggerWords.push_back(ptEvent->plugin_trigtype(ii));
 	}
 
-
+	// _DBG_<<"eventTag="<<ptEvent->eventTag()<<" id="<<ptEvent->id()<<std::endl;
 
 	for (Event<sample::uncompressed>::iterator it = ptEvent->begin(); it != ptEvent->end(); ++it) {
 		Hit<sample::uncompressed> hit = (*it);	//This is the HIT
@@ -156,8 +152,13 @@ void JEventSourcePTFile::GetEvent(std::shared_ptr<JEvent> event) {
 		fhit.slot = hit.frameHeader(0).EFCMID;
 		fhit.channel = hit.frameHeader(0).PMTID;
 
+		// _DBG_<<"hit.nFrames()="<<hit.nFrames()<<std::endl;
+		// _DBG_<<"crate="<<(int)(hit.frameHeader(0).TowerID)<<" slot="<<(int)(hit.frameHeader(0).EFCMID)<<" channel="<<(int)(hit.frameHeader(0).PMTID)<<std::endl;
+		// _DBG_<<"crate="<<(int)(fhit.crate)<<" slot="<<(int)(fhit.slot)<<" channel="<<(int)(fhit.channel)<<std::endl;
+
+
 		//add the time
-		T5nsec t(hit.frameHeader(0).T5ns);
+		T1nsec t(hit.frameHeader(0).T1ns);
 		fhit.time = t;
 
 		//add the charge
@@ -181,11 +182,11 @@ void JEventSourcePTFile::GetEvent(std::shared_ptr<JEvent> event) {
 		 One can judge this from the crate/slot/channel combination, but this is setup-dependent.
 		 For the moment, this is not supported. Hence, for the moment I differentiate between waveboard and fa250 by considering that the fa250 has no samples, only time and charge.
 		 */
-		if (fhit.data.size() == 0)
+		if (fhit.data.size() == 0){
 			fhit.type = fadcHit_TYPE::FA250VTPMODE7;
-		else
+		}else{
 			fhit.type = fadcHit_TYPE::WAVEBOARD;
-
+		}
 		tridasEvent->hits.push_back(fhit);
 	}
 	event->Insert(tridasEvent);

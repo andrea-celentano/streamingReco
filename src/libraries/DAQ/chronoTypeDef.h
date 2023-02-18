@@ -11,6 +11,7 @@
  * C++ supports this explicitly
  */
 typedef std::chrono::duration<boost::int_least64_t, std::ratio<1, 8000> > T125usec;
+typedef std::chrono::duration<boost::int_least64_t, std::ratio<1, 1000000000> > T1nsec;
 typedef std::chrono::duration<boost::int_least64_t, std::ratio<1, 200000000> > T5nsec;
 typedef std::chrono::duration<boost::int_least64_t, std::ratio<86400> > days;
 #endif

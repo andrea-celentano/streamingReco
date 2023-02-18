@@ -43,6 +43,8 @@ void HallDCalTrack_Factory::Process(const std::shared_ptr<const JEvent> &event) 
 
 	// Get list of hits
 	auto hits = event->Get<HallDCalHit>();
+	// if(hits.size()>=3) _DBG_<<"hits.size()=" << hits.size() << std::endl;
+
 
 	// Sort hits in order of time
 	auto mylambda = [](const HallDCalHit *a, const HallDCalHit *b ){return a->getHitTime() < b->getHitTime();};

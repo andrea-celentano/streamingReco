@@ -61,7 +61,7 @@ void fa250VTPMode7Hit_factory::Process(const std::shared_ptr<const JEvent> &aEve
 	 *Hence, I take the earliest hit time and remove it from the all hits.
 	 *Note that I loop on all hits in tridas_event, hence even if I mix fa250VTPMode7Hit and waveveboardHit, that is ok.
 	 */
-	T5nsec firstTime = tridas_event->hits[0].time;
+	auto firstTime = tridas_event->hits[0].time;
 	for (auto hit : tridas_event->hits) {
 		if (hit.time < firstTime) firstTime = hit.time;
 	}
@@ -73,6 +73,8 @@ void fa250VTPMode7Hit_factory::Process(const std::shared_ptr<const JEvent> &aEve
 
 			faHit->m_charge = hit.charge;
 			faHit->m_time = hit.time - firstTime;
+
+			// _DBG_<<"crate="<<(int)(hit.crate)<<" slot="<<(int)(hit.slot)<<" channel="<<(int)(hit.channel)<<std::endl;
 
 			faHit->m_channel.crate = hit.crate;
 			faHit->m_channel.slot = hit.slot;
@@ -87,6 +89,7 @@ void fa250VTPMode7Hit_factory::Process(const std::shared_ptr<const JEvent> &aEve
 
 
 			//Add to the framework
+			// _DBG_<<"crate="<<(int)(faHit->m_channel.crate)<<" slot="<<(int)(faHit->m_channel.slot)<<" channel="<<(int)(faHit->m_channel.channel)<<std::endl;
 			mData.push_back(faHit);
 		}
 	}

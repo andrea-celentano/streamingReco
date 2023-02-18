@@ -15,6 +15,7 @@
 
 #include <DAQ/JEventSourcePTFileGenerator.h>
 #include <DAQ/JFactoryGenerator_DAQ.h>
+#include <HallD/JFactoryGenerator_HallD.h>
 #include <TT/JFactoryGenerator_TT.h>
 #include <FT/JFactoryGenerator_FT.h>
 
@@ -29,10 +30,11 @@ void InitPlugin(JApplication *app){
 	InitJANAPlugin(app);
 	app->Add(new JEventSourcePTFileGenerator());
 	app->Add(new JFactoryGenerator_DAQ());
+	app->Add(new JFactoryGenerator_HallD());
 	app->Add(new JFactoryGenerator_TT());
 	app->Add(new JFactoryGenerator_FT());
 
-	app->SetParameterValue("RUNTYPE", "HALLB");
+	app->SetParameterValue("RUNTYPE", "EIC2023"); // This is used in TT/TranslationTable.cc to determine which TT to use
 	auto calib_manager = std::make_shared<JCalibrationManager>();
 	calib_manager->AddCalibrationGenerator(new JCalibrationGeneratorCCDB);
 	japp->ProvideService(calib_manager);

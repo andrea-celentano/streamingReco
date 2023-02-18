@@ -28,7 +28,7 @@ public:
 	std::vector<uint16_t> samples; //these are the raw samples
 	float m_dT; //sampling time (ns)
 
-	T5nsec m_time; //in ns
+	T1nsec m_time; //in ns
 
 	float m_charge; //as reported from the waveboard
 

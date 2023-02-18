@@ -12,7 +12,7 @@
 #include "DAQ/TridasEvent.h"
 //TRIDAS headers
 #include <tools/ptfile_reader.hpp>
-#include <packages/DataFormats/s_dataformat_bdx.hpp>
+#include <packages/DataFormats/s_dataformat_clas12.hpp>
 using namespace tridas::post_trigger;
 
 class JEventSourcePTFile: public JEventSource {

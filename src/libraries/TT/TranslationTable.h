@@ -26,9 +26,9 @@ public:
 	// class to relate them to the DAQ indexing scheme of
 	// crate, slot, channel.
 	struct csc_t {
-		uint8_t crate;
-		uint8_t slot;
-		uint8_t channel;
+		uint8_t crate=0;
+		uint8_t slot=0;
+		uint8_t channel=0;
 
 		inline bool operator==(const struct csc_t &rhs) const {
 			return (crate == rhs.crate) && (slot == rhs.slot) && (channel == rhs.channel);
@@ -68,7 +68,7 @@ public:
 	};
 
 	enum Detector_t {
-		UNKNOWN_DETECTOR, FTCAL, FTHODO, HallDCAL, NUM_DETECTOR_TYPES
+		UNKNOWN_DETECTOR, FTCAL, FTHODO, HallDCAL, EIC3x3CAL, EIC5x5CAL, NUM_DETECTOR_TYPES
 	};
 
 	std::string DetectorName(Detector_t type) const {
@@ -81,6 +81,12 @@ public:
 			break;
 		case HallDCAL:
 			return "HallDCAL";
+			break;
+		case EIC3x3CAL:
+			return "EIC3x3CAL";
+			break;
+		case EIC5x5CAL:
+			return "EIC5x5CAL";
 			break;
 		case UNKNOWN_DETECTOR:
 		default:
@@ -271,6 +277,8 @@ public:
 			FTHODO_Index_t *FTHODO;
 			FTCAL_Index_t *FTCAL;
 			HallDCAL_Index_t *HallDCAL;
+			HallDCAL_Index_t *EIC3x3CAL;  // recycle the HallDCAL_Index_t for Spring 2023 cosmics/beam test
+			HallDCAL_Index_t *EIC5x5CAL;  // recycle the HallDCAL_Index_t for Spring 2023 cosmics/beam test
 		};
 	};
 
@@ -282,6 +290,7 @@ public:
 
 	void ReadTranslationTableHALLB();
 	void ReadTranslationTableHALLD();
+	void ReadTranslationTableEIC2023();
 	/*Here goes the methods to return the channel info (detector name / detector-specific id) given the csc*/
 	TranslationTable::ChannelInfo getChannelInfo(const csc_t &csc) const;
 	TranslationTable::ChannelInfo getChannelInfo(int crate, int slot, int channel) const;

@@ -42,10 +42,12 @@ void EIC3x3CalTrack_Factory::Process(const std::shared_ptr<const JEvent> &event)
 	// t_window of each other that fit one of the predefined patterns.
 
 	// Get list of hits
-	auto hits = event->Get<EIC3x3CalHit>();
+	auto hits = event->Get<HallDCalHit>();
+
+	if(hits.size()>=3) _DBG_<<"hits.size()=" << hits.size() << std::endl;
 
 	// Sort hits in order of time
-	auto mylambda = [](const EIC3x3CalHit *a, const EIC3x3CalHit *b ){return a->getHitTime() < b->getHitTime();};
+	auto mylambda = [](const HallDCalHit *a, const HallDCalHit *b ){return a->getHitTime() < b->getHitTime();};
 	std::sort( hits.begin(), hits.end(), mylambda);
 
 	// Loop over hits. For each, find list of hits within

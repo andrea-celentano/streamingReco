@@ -4,7 +4,7 @@
 
 #include <JANA/JObject.h>
 
-#include <HallD/EIC3x3CalHit.h>
+#include <HallD/HallDCalHit.h>
 
 /// JObjects are plain-old data containers for inputs, intermediate results, and outputs.
 /// They have member functions for introspection and maintaining associations with other JObjects, but
@@ -20,7 +20,7 @@ class EIC3x3CalTrack : public JObject {
 	std::string description;
 
 	/// List of hits belonging to this track
-	std::vector<const EIC3x3CalHit*> hits;
+	std::vector<const HallDCalHit*> hits;
 	
 	/// Properties of the track
 	float t_start;
@@ -28,7 +28,7 @@ class EIC3x3CalTrack : public JObject {
 	uint32_t Nhits;
 
 	/// Make it convenient to construct one of these things
-	typedef std::vector<const EIC3x3CalHit*>::iterator hit_iter; // (make the next line more compact/readable)
+	typedef std::vector<const HallDCalHit*>::iterator hit_iter; // (make the next line more compact/readable)
 	EIC3x3CalTrack(hit_iter begin, hit_iter end){
 
 		hits.insert(hits.begin(), begin, end);
@@ -40,7 +40,7 @@ class EIC3x3CalTrack : public JObject {
 	/// Convenience functions
 	float getTrackStartTime(void){ return t_start; }
 	float getTrackEndTime(void)  { return t_end; }
-	std::vector<const EIC3x3CalHit*> GetHits() { return hits; }
+	std::vector<const HallDCalHit*> GetHits() { return hits; }
 	int GetNumHits() { return Nhits; }
 
 
