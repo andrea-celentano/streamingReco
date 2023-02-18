@@ -4,12 +4,12 @@ project(PTFileSource)
 
 find_package(JANA REQUIRED)
 
-file(GLOB LIB_SRC_FILES *.cc *.cpp *.c)
-file(GLOB HEADER_FILES *.h *.hh *.hpp)
+file(GLOB LIB_SRC_FILES *.cc)
+file(GLOB HEADER_FILES *.h)
 
 
 add_library(${PROJECT_NAME} SHARED)
-target_sources(${PROJECT_NAME} PRIVATE ${LIB_SRC_FILES})
+target_sources(${PROJECT_NAME} PRIVATE ${LIB_SRC_FILES} ${HEADER_FILES})
 set_target_properties(${PROJECT_NAME} PROPERTIES PREFIX "")
 target_include_directories(${PROJECT_NAME} PRIVATE $ENV{CCDB_HOME}/include)
 target_link_directories(${PROJECT_NAME} PRIVATE ${CCDB_LIBDIR} /usr/lib64/mysql)
