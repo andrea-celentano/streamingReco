@@ -74,7 +74,7 @@ endforeach()
 
 add_subdirectory (src/libraries)
 add_subdirectory (src/plugins)
-add_subdirectory (src/external/TRIDAS)
+# add_subdirectory (src/external/TRIDAS)
 add_subdirectory (src/programs/streamingReco)
 
 
