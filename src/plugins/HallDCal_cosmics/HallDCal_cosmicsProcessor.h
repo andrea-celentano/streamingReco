@@ -24,6 +24,14 @@ public:
 
     TH1D *hQ[9];
 
+    TTree *tree0;
+    Int_t raw_crate;
+    Int_t raw_slot;
+    Int_t raw_channel;
+    Int_t raw_id;
+    Float_t raw_charge;  // pedestal corrected by tridas
+    Float_t raw_time;    // relative to earliest hit that tridas associated with event
+
 	TTree *tree1;
 	Float_t ch_1, ch_2,ch_3,ch_4,ch_5,ch_6,ch_7,ch_8,ch_9;
     Float_t* ch[9]={&ch_1, &ch_2, &ch_3, &ch_4, &ch_5, &ch_6, &ch_7, &ch_8, &ch_9}; // make it easy to access above via id

@@ -4,6 +4,7 @@
 #include <JANA/JLogger.h>
 #include "JANA/Services/JGlobalRootLock.h"
 #include "JANA/JApplication.h"
+#include <DAQ/fa250VTPMode7Hit.h>
 
 #include "TFile.h"
 #include "TH1D.h"
@@ -43,6 +44,14 @@ void HallDCal_cosmicsProcessor::Init() {
 		hQ[ii]=new TH1D(Form("hQ_%i",ii),Form("hQ_%i",ii),1000,0,1E5);
 	}
 
+	tree0 = new TTree("tree0","fa250VTPMode7Hit");
+	tree0->Branch("crate",&raw_crate,"crate/i");
+	tree0->Branch("slot",&raw_slot,"slot/i");
+	tree0->Branch("channel",&raw_channel,"channel/i");
+	tree0->Branch("id",&raw_id,"id/i");
+    tree0->Branch("Q",&raw_charge,"Q/F");
+    tree0->Branch("dt",&raw_time,"dt/F");
+
 	tree1 = new TTree("tree1","Reconst ntuple");
 	tree1->Branch("ch_1",&ch_1,"ch_1/F");         tree1->Branch("ch_2",&ch_2,"ch_2/F");      tree1->Branch("ch_3",&ch_3,"ch_3/F");
 	tree1->Branch("ch_4",&ch_4,"ch_4/F");         tree1->Branch("ch_5",&ch_5,"ch_5/F");      tree1->Branch("ch_6",&ch_6,"ch_6/F");
@@ -72,17 +81,28 @@ void HallDCal_cosmicsProcessor::Init() {
 }
 
 void HallDCal_cosmicsProcessor::Process(const std::shared_ptr<const JEvent> &event) {
-    LOG << "HallDCal_cosmicsProcessor::Process, Event #" << event->GetEventNumber() << LOG_END;
+    // LOG << "HallDCal_cosmicsProcessor::Process, Event #" << event->GetEventNumber() << LOG_END;
     
     /// Do everything we can in parallel
     /// Warning: We are only allowed to use local variables and `event` here
     //auto hits = event->Get<Hit>();
 
+    auto rawhits = event->Get<fa250VTPMode7Hit>();
     auto hits = event->Get<HallDCalHit>();
 
     /// Lock mutex
     m_root_lock->acquire_write_lock();
     
+    for(auto rawhit : rawhits){
+            rawhit->m_charge;
+            raw_crate   = rawhit->m_channel.crate;
+            raw_slot    = rawhit->m_channel.slot;
+            raw_channel = rawhit->m_channel.channel;
+            raw_id      = rawhit->m_channel.channel; // this is due to channels 0-8 being mapped to channels 0-8 (See TranslationTable::ReadTranslationTableEIC2023)
+            raw_charge  = rawhit->m_charge;
+            raw_time    = rawhit->m_time.count();
+            tree0->Fill();
+    }
 
     for (auto hit : hits){
     	int iX=hit->m_channel.iX;
@@ -90,8 +110,9 @@ void HallDCal_cosmicsProcessor::Process(const std::shared_ptr<const JEvent> &eve
     	int id=iX*3+iY;
     	double Q=hit->getHitEnergy();
         
+        assert(id>=0 && id<9);
     	hQ[id]->Fill(Q);
-        
+
         // Look for hit in central crystal
         // DL - Energy seems highest for id==3 so assume that is central crystal
         if( id == 4 ){
