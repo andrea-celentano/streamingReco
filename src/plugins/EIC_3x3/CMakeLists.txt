@@ -1,6 +1,6 @@
 cmake_minimum_required (VERSION 3.16)
 
-project(HalldCal_cosmics_trigger)
+project(EIC_3x3)
 
 
 file(GLOB LIB_SRC_FILES *.cc *.cpp *.c)
@@ -8,6 +8,9 @@ file(GLOB HEADER_FILES *.h *.hh *.hpp)
 
 add_library(${PROJECT_NAME} SHARED)
 target_sources(${PROJECT_NAME} PRIVATE ${LIB_SRC_FILES} ${HEADER_FILES})
+target_include_directories(${PROJECT_NAME} PRIVATE ${CMAKE_SOURCE_DIR}/src/plugins)
 set_target_properties(${PROJECT_NAME} PROPERTIES PREFIX "")
+target_link_libraries(${PROJECT_NAME} HallD)
+
 
 install(TARGETS ${PROJECT_NAME} DESTINATION ${PLUGIN_OUTPUT_DIRECTORY})

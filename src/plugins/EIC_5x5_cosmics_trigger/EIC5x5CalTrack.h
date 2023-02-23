@@ -13,7 +13,7 @@
 /// however, it is highly encouraged to keep them flat and include only primitive datatypes if possible.
 /// Think of a JObject as being a row in a database table, with event number as an implicit foreign key.
 
-class EIC3x3CalTrack : public JObject {
+class EIC5x5CalTrack : public JObject {
 
 	public:
 	
@@ -29,7 +29,7 @@ class EIC3x3CalTrack : public JObject {
 
 	/// Make it convenient to construct one of these things
 	typedef std::vector<const HallDCalHit*>::iterator hit_iter; // (make the next line more compact/readable)
-	EIC3x3CalTrack(hit_iter begin, hit_iter end){
+	EIC5x5CalTrack(hit_iter begin, hit_iter end){
 
 		hits.insert(hits.begin(), begin, end);
 		t_start = hits.front()->getHitTime();
@@ -38,10 +38,10 @@ class EIC3x3CalTrack : public JObject {
 	}
 	
 	/// Convenience functions
-	float getTrackStartTime(void) const { return t_start; }
-	float getTrackEndTime(void) const { return t_end; }
-	std::vector<const HallDCalHit*> GetHits() const { return hits; }
-	int GetNumHits() const { return Nhits; }
+	float getTrackStartTime(void){ return t_start; }
+	float getTrackEndTime(void)  { return t_end; }
+	std::vector<const HallDCalHit*> GetHits() { return hits; }
+	int GetNumHits() { return Nhits; }
 
 
 	/// Override className to tell JANA to store the exact name of this class where we can

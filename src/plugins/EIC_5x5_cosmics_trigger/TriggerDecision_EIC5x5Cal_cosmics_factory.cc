@@ -3,8 +3,8 @@
 #include <JANA/JApplication.h>
 #include <JANA/JFactoryGenerator.h>
 
-#include "HallDCalTrack_Factory.h"
-#include "TriggerDecision_HallDCal_cosmics_factory.h"
+#include "EIC5x5CalTrack_Factory.h"
+#include "TriggerDecision_EIC5x5Cal_cosmics_factory.h"
 #include "DAQ/TridasEvent.h"
 
 
@@ -22,42 +22,42 @@ void InitPlugin(JApplication* app) {
 
     InitJANAPlugin(app);
 
-    LOG << "Loading HallDCal_cosmics_trigger" << LOG_END;
-    app->Add( new JFactoryGeneratorT<TriggerDecision_HallDCal_cosmics_factory>() );
-    app->Add( new JFactoryGeneratorT<HallDCalTrack_Factory>() );
+    LOG << "Loading EIC5x5Cal_cosmics_trigger" << LOG_END;
+    app->Add( new JFactoryGeneratorT<TriggerDecision_EIC5x5Cal_cosmics_factory>() );
+    app->Add( new JFactoryGeneratorT<EIC5x5CalTrack_Factory>() );
 }
 }
 
 //-----------------------------------------------
-// TriggerDecision_HallDCal_cosmics_factory (constructor)
+// TriggerDecision_EIC5x5Cal_cosmics_factory (constructor)
 //-----------------------------------------------
-TriggerDecision_HallDCal_cosmics_factory::TriggerDecision_HallDCal_cosmics_factory() {
-	mTag="HallDCal_cosmics";
+TriggerDecision_EIC5x5Cal_cosmics_factory::TriggerDecision_EIC5x5Cal_cosmics_factory() {
+	mTag="EIC5x5Cal_cosmics";
 }
 
 //-----------------------------------------------
 // Init
 //-----------------------------------------------
-void TriggerDecision_HallDCal_cosmics_factory::Init() {
+void TriggerDecision_EIC5x5Cal_cosmics_factory::Init() {
 
 	ENABLED    = true;
 	MIN_TRACKS = 1;
 	MAX_TRACKS = 1000;
 
-	mApp->SetDefaultParameter("TRIGGER:HallDCal_cosmics:ENABLED", ENABLED, "Set to 0 to disable the HallDCal_cosmics trigger completely (no TriggerDecision objects will be produced).");
-	mApp->SetDefaultParameter("TRIGGER:HallDCal_cosmics:MIN_TRACKS", MIN_TRACKS, "Minimum number of HallDCalTrack objects to trigger.");
-	mApp->SetDefaultParameter("TRIGGER:HallDCal_cosmics:MAX_TRACKS", MAX_TRACKS, "Maximum number of HallDCalTrack objects to trigger.");
+	mApp->SetDefaultParameter("TRIGGER:EIC5x5Cal_cosmics:ENABLED", ENABLED, "Set to 0 to disable the EIC5x5Cal_cosmics trigger completely (no TriggerDecision objects will be produced).");
+	mApp->SetDefaultParameter("TRIGGER:EIC5x5Cal_cosmics:MIN_TRACKS", MIN_TRACKS, "Minimum number of EIC5x5CalTrack objects to trigger.");
+	mApp->SetDefaultParameter("TRIGGER:EIC5x5Cal_cosmics:MAX_TRACKS", MAX_TRACKS, "Maximum number of EIC5x5CalTrack objects to trigger.");
 }
 
 //-----------------------------------------------
 // Process
 //-----------------------------------------------
-void TriggerDecision_HallDCal_cosmics_factory::Process(const std::shared_ptr<const JEvent> &event) {
+void TriggerDecision_EIC5x5Cal_cosmics_factory::Process(const std::shared_ptr<const JEvent> &event) {
 
 	if( !ENABLED ) return; // allow user to disable this via JANA config. param.
 
 	// Get track objects from factory
-	auto trks = event->Get<HallDCalTrack>();
+	auto trks = event->Get<EIC5x5CalTrack>();
 	int Ntrks = trks.size();
 
 	bool decision = ((Ntrks>=MIN_TRACKS) && (Ntrks<=MAX_TRACKS));
@@ -68,7 +68,7 @@ void TriggerDecision_HallDCal_cosmics_factory::Process(const std::shared_ptr<con
 	auto mTriggerDecision = new TriggerDecision( mTag ); 
 	mTriggerDecision->SetDecision( decision );
 	mTriggerDecision->SetID(0x01); // this will show up in 16 high order bit in TriggeredEvent::plugin_nseeds[] (lower 16 will be 0 or 1 depending on whether trigger fired)
-	mData.push_back(mTriggerDecision);
+	mData.push_back(mTriggerDecision);	
 }
 
 
