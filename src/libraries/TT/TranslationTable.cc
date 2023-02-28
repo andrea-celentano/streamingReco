@@ -77,10 +77,16 @@ void TranslationTable::ReadTranslationTableEIC2023() {
 	// This sets up the translation table for the EIC2023 tests.
 	// For this, there were 2 calorimeters used, a 3x3 and a
 	// 5x5. Initially they were set up in the Hall-B Counting
-	// house and then the 5x5 moved to Hall-D. At this time it is not
-	// clear if they will overlap in channels or if we can use
-	// a single translation table for both calorimeters and the
-	// two locations of the 5x5.
+	// house and then the 5x5 moved to Hall-D. 
+	//
+	// For the Hall-B counting house, a crate number of 80 was used.
+	//
+	// For the Hall-D beam test, a crate number of 21 was used.
+	//
+	// The different crate numbers allow for a single translation
+	// table for both calorimeters. HOWEVER, this fails for data
+	// taken with the 5x5 calorimeter in the Hall-B counting house
+	// since it would also use crate=80!
 	//
 	// Here is an e-mail from Sergey on Feb. 13, 2023 describing
 	// the configuration for the 3x3:
@@ -107,6 +113,24 @@ void TranslationTable::ReadTranslationTableEIC2023() {
 		ch.EIC3x3CAL->iX=ii/3; // is this correct?
 		ch.EIC3x3CAL->iY=ii%3; // is this correct?
 
+		//insert into TT data - [] operator creates a new entry in map
+		Get_TT()[csc] = ch;
+	}
+
+	// I cannot find the e-mail Sergey sent on the channel mapping for the 
+	// 5x5 array, but I assume it followed a similar pattern so implement
+	// that here.
+	for (int ii = 0; ii < 25; ii++) {
+		TranslationTable::csc_t csc;
+		csc.crate = 21; // empirically from HallD 5x5 data
+		csc.slot = (ii<16 ? 3:4); //
+		csc.channel = ii%16;
+
+		TranslationTable::ChannelInfo ch;
+		ch.det_sys = TranslationTable::EIC5x5CAL;
+		ch.EIC5x5CAL = new TranslationTable::HallDCAL_Index_t;
+		ch.EIC5x5CAL->iX=ii/5; // is this correct?
+		ch.EIC5x5CAL->iY=ii%5; // is this correct?
 
 		//insert into TT data - [] operator creates a new entry in map
 		Get_TT()[csc] = ch;

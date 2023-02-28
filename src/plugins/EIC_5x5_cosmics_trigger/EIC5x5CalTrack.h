@@ -38,10 +38,10 @@ class EIC5x5CalTrack : public JObject {
 	}
 	
 	/// Convenience functions
-	float getTrackStartTime(void){ return t_start; }
-	float getTrackEndTime(void)  { return t_end; }
-	std::vector<const HallDCalHit*> GetHits() { return hits; }
-	int GetNumHits() { return Nhits; }
+	float getTrackStartTime(void) const { return t_start; }
+	float getTrackEndTime(void) const { return t_end; }
+	std::vector<const HallDCalHit*> GetHits() const { return hits; }
+	int GetNumHits() const { return Nhits; }
 
 
 	/// Override className to tell JANA to store the exact name of this class where we can
