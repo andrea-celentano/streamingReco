@@ -1,5 +1,6 @@
 cmake_minimum_required (VERSION 3.16)
 
+add_subdirectory(SRBase)
 add_subdirectory(EIC_3x3_cosmics_trigger)
 add_subdirectory(EIC_3x3)
 add_subdirectory(EIC_5x5_cosmics_trigger)
