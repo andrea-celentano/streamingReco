@@ -42,11 +42,13 @@ TriggerDecision_EIC_5x5_beam_factory::TriggerDecision_EIC_5x5_beam_factory() {
 //-----------------------------------------------
 void TriggerDecision_EIC_5x5_beam_factory::Init() {
 
-	ENABLED       = true;
-	MIN_BLOCKS    = 2;
+	ENABLED        = true;
+	MIN_BLOCKS     = 2;
+	ESUM_THRESHOLD = 0.0;
 
 	mApp->SetDefaultParameter("TRIGGER:EIC_5x5_beam:ENABLED", ENABLED, "Set to 0 to disable the EIC_5x5_beam trigger completely (no TriggerDecision objects will be produced).");
 	mApp->SetDefaultParameter("TRIGGER:EIC_5x5_beam:MIN_BLOCKS", MIN_BLOCKS, "Minimum number of calorimeter blocks hit to make a trigger.");
+	mApp->SetDefaultParameter("TRIGGER:EIC_5x5_beam:ESUM_THRESHOLD", ESUM_THRESHOLD, "Minimum sum of HallDCalhit energy values to make a trigger.");
 }
 
 //-----------------------------------------------
@@ -60,7 +62,11 @@ void TriggerDecision_EIC_5x5_beam_factory::Process(const std::shared_ptr<const J
 	auto blks = event->Get<HallDCalHit>();
 	int Nblks = blks.size();
 
-	bool decision = Nblks>=MIN_BLOCKS;
+	float Esum = 0.0;
+	for(auto hit : blks) {
+		Esum += hit->getHitEnergy();
+	}
+	bool decision = (Nblks>=MIN_BLOCKS) && (Esum>=ESUM_THRESHOLD);
 
 	// Create TriggerDecision object to publish the decision
 	// Argument is trigger description. It will end up in metadata file so keep it simple.
