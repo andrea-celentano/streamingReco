@@ -86,7 +86,7 @@ void HallDCalHit_factory::Process(const std::shared_ptr<const JEvent> &aEvent) {
 		// _DBG_<<"Detector Type: " << m_tt->DetectorName(m_channel.det_sys) << std::endl;
 		// _DBG_<<"crate="<<(int)faHit->m_channel.crate<<" slot="<<(int)faHit->m_channel.slot<<" channel="<<(int)faHit->m_channel.channel<<std::endl;
 		// _DBG_<<"crate="<<(int)m_channel.CSC.crate<<" slot="<<(int)m_channel.CSC.slot<<" channel="<<(int)m_channel.CSC.channel<<std::endl;
-		if ((m_channel.det_sys == TranslationTable::EIC3x3CAL)) {
+		if ((m_channel.det_sys == TranslationTable::EIC3x3CAL) || (m_channel.det_sys == TranslationTable::EIC5x5CAL)) {
 
 			//Create a new HallDCal Hit Object object
 			auto mHallDCalHit = new HallDCalHit();
@@ -104,6 +104,7 @@ void HallDCalHit_factory::Process(const std::shared_ptr<const JEvent> &aEvent) {
 			mData.push_back(mHallDCalHit);
 		}
 	}
+	// _DBG_<<"faHits_fa250VTPMode7.size()=" << faHits_fa250VTPMode7.size() << " HallDCalHit.size()=" << mData.size() << std::endl;
 
 }
 
