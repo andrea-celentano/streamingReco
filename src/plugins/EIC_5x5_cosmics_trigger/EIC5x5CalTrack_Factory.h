@@ -17,7 +17,8 @@ class EIC5x5CalTrack_Factory : public JFactoryT<EIC5x5CalTrack> {
     // Insert any member variables here
 	static const size_t GRID_HEIGHT = 5;
 	static const size_t GRID_WIDTH  = 5;
-    static const size_t MIN_HITS_PER_TRACK = 3;
+    
+    size_t MIN_HITS_PER_TRACK;
 	
 	double t_window; // (see EIC5x5CalTrack_Factory::ChangeRun)
 

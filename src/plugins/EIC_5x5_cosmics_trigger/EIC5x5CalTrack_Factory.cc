@@ -58,6 +58,9 @@ void EIC5x5CalTrack_Factory::add_next_row( int dir, uint32_t pattern, uint32_t i
 //-----------------------------------
 void EIC5x5CalTrack_Factory::Init() {
 
+	MIN_HITS_PER_TRACK = 3;
+	mApp->SetDefaultParameter("TRIGGER:EIC5x5CalTrack:MIN_HITS_PER_TRACK", MIN_HITS_PER_TRACK, "Minimum number of hits in cosmic track.");
+
 	// Loop over every 
 	LOG<<"Building patterns for cosmic tracks in " <<GRID_WIDTH<<"x"<<GRID_HEIGHT<<" calorimeter ..." << LOG_END;
 	for(uint32_t irow=0; irow<GRID_HEIGHT; irow++){
@@ -103,7 +106,7 @@ void EIC5x5CalTrack_Factory::Process(const std::shared_ptr<const JEvent> &event)
 	// Get list of hits
 	auto hits = event->Get<HallDCalHit>();
 
-	if(hits.size()>=3) _DBG_<<"hits.size()=" << hits.size() << std::endl;
+	// if(hits.size()>=3) _DBG_<<"hits.size()=" << hits.size() << std::endl;
 
 	// Sort hits in order of time
 	auto mylambda = [](const HallDCalHit *a, const HallDCalHit *b ){return a->getHitTime() < b->getHitTime();};
