@@ -18,6 +18,7 @@ public:
 
     bool ENABLED;
     int MIN_BLOCKS;
+    float ESUM_THRESHOLD;
 };
 
 
