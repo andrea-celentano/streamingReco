@@ -44,11 +44,15 @@ void TriggerDecision_EIC_5x5_beam_factory::Init() {
 
 	ENABLED        = true;
 	MIN_BLOCKS     = 2;
-	ESUM_THRESHOLD = 0.0;
+	ESUM_THRESHOLD = 0.0; 
+
+	T_WINDOW = 100.0; // MS time window around seed to exclude uncorrelated hits
 
 	mApp->SetDefaultParameter("TRIGGER:EIC_5x5_beam:ENABLED", ENABLED, "Set to 0 to disable the EIC_5x5_beam trigger completely (no TriggerDecision objects will be produced).");
 	mApp->SetDefaultParameter("TRIGGER:EIC_5x5_beam:MIN_BLOCKS", MIN_BLOCKS, "Minimum number of calorimeter blocks hit to make a trigger.");
 	mApp->SetDefaultParameter("TRIGGER:EIC_5x5_beam:ESUM_THRESHOLD", ESUM_THRESHOLD, "Minimum sum of HallDCalhit energy values to make a trigger.");
+
+	mApp->SetDefaultParameter("TRIGGER:EIC_5x5_beam:T_WINDOW", T_WINDOW, "Duration of time window centered on most energetic hit for identifying beam clusters");
 }
 
 //-----------------------------------------------
@@ -57,15 +61,40 @@ void TriggerDecision_EIC_5x5_beam_factory::Init() {
 void TriggerDecision_EIC_5x5_beam_factory::Process(const std::shared_ptr<const JEvent> &event) {
 
 	if( !ENABLED ) return; // allow user to disable this via JANA config. param.
-
+	
 	// Get track objects from factory
 	auto blks = event->Get<HallDCalHit>();
-	int Nblks = blks.size();
-
-	float Esum = 0.0;
-	for(auto hit : blks) {
-		Esum += hit->getHitEnergy();
+	
+	float Eseed = 0, tseed;
+	for(auto hit : blks){
+		if(hit->getHitEnergy()>Eseed){
+			Eseed = hit->getHitEnergy();
+			tseed = hit->getHitTime();
+		}
 	}
+	
+	int Nblks = 0;
+	int Ncluster[5][5]; // look for hit numer in terms of channels and not hits
+	for(int i = 0; i < 5; i++){
+		for(int j = 0; j < 5; j++) {
+			Ncluster[i][j]=0;
+		}
+	}	
+	float Esum = 0.0;
+
+	for(auto hit : blks) {
+		if(fabs(hit->getHitTime()-tseed)<T_WINDOW){
+			Esum += hit->getHitEnergy();
+			Ncluster[hit->getHitIX()][hit->getHitIY()] = 1;
+		}	
+	}
+	
+	for(int i = 0; i < 5; i++){
+		for(int j = 0; j < 5; j++){
+			Nblks += Ncluster[i][j];
+		}
+	}		
+
 	bool decision = (Nblks>=MIN_BLOCKS) && (Esum>=ESUM_THRESHOLD);
 
 	// Create TriggerDecision object to publish the decision
