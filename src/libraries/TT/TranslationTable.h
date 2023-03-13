@@ -9,6 +9,7 @@
 #define _TranslationTable_
 
 #include <map>
+#include <mutex>
 #include <iostream>
 #include "JANA/JObject.h"
 
@@ -324,7 +325,7 @@ private:
 	//Thus the static variables themselves only have function scope.
 	//Access is only available via the private member functions, thus access is fully controlled.
 	//They are shared amongst threads, so locks are necessary, but since they are private this class can handle it internally
-	pthread_mutex_t& Get_TT_Mutex(void) const;
+	std::mutex& Get_TT_Mutex(void) const;
 	bool& Get_TT_Initialized(void) const;
 	std::map<TranslationTable::csc_t, TranslationTable::ChannelInfo>& Get_TT(void) const;
 

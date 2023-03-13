@@ -10,8 +10,8 @@
 using namespace std;
 
 // Use one translation table for all threads
-pthread_mutex_t& TranslationTable::Get_TT_Mutex(void) const {
-	static pthread_mutex_t tt_mutex = PTHREAD_MUTEX_INITIALIZER;
+std::mutex& TranslationTable::Get_TT_Mutex(void) const {
+	static std::mutex tt_mutex;
 	return tt_mutex;
 }
 
@@ -42,6 +42,11 @@ TranslationTable::TranslationTable(JApplication *app, int runN) :
 	 *
 	 *
 	 */
+
+	// If the translation table has already been initialized for this process then there is no
+	// need to do anything else.
+	if( Get_TT_Initialized() ) return; 
+
 	string tttype;
 //#define WORK_AROUND
 
@@ -101,6 +106,9 @@ void TranslationTable::ReadTranslationTableEIC2023() {
 	// Sergey
 	//
 
+	std::lock_guard<std::mutex> lck( Get_TT_Mutex() );
+	if (Get_TT_Initialized()) return;
+
 	for (int ii = 0; ii < 9; ii++) {
 		TranslationTable::csc_t csc;
 		csc.crate = 80; // empirically from HallB Coiunt House 3x3 data
@@ -135,8 +143,13 @@ void TranslationTable::ReadTranslationTableEIC2023() {
 		//insert into TT data - [] operator creates a new entry in map
 		Get_TT()[csc] = ch;
 	}
+
+	Get_TT_Initialized() = true;
 }
 void TranslationTable::ReadTranslationTableHALLD() {
+
+	std::lock_guard<std::mutex> lck( Get_TT_Mutex() );
+	if (Get_TT_Initialized()) return;
 
 	//TODO
 	for (int ii = 0; ii < 9; ii++) {
@@ -155,17 +168,17 @@ void TranslationTable::ReadTranslationTableHALLD() {
 		//insert into TT data - [] operator creates a new entry in map
 		Get_TT()[csc] = ch;
 	}
+
+	Get_TT_Initialized() = true;
+
 }
 void TranslationTable::ReadTranslationTableHALLB() {
 	//std::cout << "ReadTranslationTableHALLB() start" << std::endl;
 
 	// It seems expat is not thread safe so we lock a mutex here and
 	// read in the translation table just once
-	pthread_mutex_lock(&Get_TT_Mutex());
-	if (Get_TT_Initialized()) {
-		pthread_mutex_unlock(&Get_TT_Mutex());
-		return;
-	}
+	std::lock_guard<std::mutex> lck( Get_TT_Mutex() );
+	if (Get_TT_Initialized()) return;
 
 	//Try to read from CCDB
 
@@ -218,7 +231,6 @@ void TranslationTable::ReadTranslationTableHALLB() {
 	}
 
 	Get_TT_Initialized() = true;
-	pthread_mutex_unlock(&Get_TT_Mutex());
 
 }
 
