@@ -43,10 +43,12 @@ void TriggerDecision_EIC5x5Cal_cosmics_factory::Init() {
 	ENABLED    = true;
 	MIN_TRACKS = 1;
 	MAX_TRACKS = 1000;
+	MAX_HITS   = 8;
 
 	mApp->SetDefaultParameter("TRIGGER:EIC5x5Cal_cosmics:ENABLED", ENABLED, "Set to 0 to disable the EIC5x5Cal_cosmics trigger completely (no TriggerDecision objects will be produced).");
 	mApp->SetDefaultParameter("TRIGGER:EIC5x5Cal_cosmics:MIN_TRACKS", MIN_TRACKS, "Minimum number of EIC5x5CalTrack objects to trigger.");
 	mApp->SetDefaultParameter("TRIGGER:EIC5x5Cal_cosmics:MAX_TRACKS", MAX_TRACKS, "Maximum number of EIC5x5CalTrack objects to trigger.");
+	mApp->SetDefaultParameter("TRIGGER:EIC5x5Cal_cosmics:MAX_HITS", MAX_HITS, "Maximum number of HallDCalhit objects to trigger.");
 }
 
 //-----------------------------------------------
@@ -56,11 +58,21 @@ void TriggerDecision_EIC5x5Cal_cosmics_factory::Process(const std::shared_ptr<co
 
 	if( !ENABLED ) return; // allow user to disable this via JANA config. param.
 
-	// Get track objects from factory
-	auto trks = event->Get<EIC5x5CalTrack>();
-	int Ntrks = trks.size();
+	// Check if there are more than MAX_HITS in the event. This
+	// gives some ability to cut out beam events that may well 
+	// fit a track pattern.
+	auto hits = event->Get<HallDCalHit>();
+	bool decision = hits.size() <= MAX_HITS;
 
-	bool decision = ((Ntrks>=MIN_TRACKS) && (Ntrks<=MAX_TRACKS));
+	// Only check for cosmic tracks if we are not already rejecting 
+	// the event due to too many hits.
+	if( decision ){
+		// Get track objects from factory
+		auto trks = event->Get<EIC5x5CalTrack>();
+		int Ntrks = trks.size();
+
+		decision &= ((Ntrks>=MIN_TRACKS) && (Ntrks<=MAX_TRACKS));
+	}
 
 	// Create TriggerDecision object to publish the decision
 	// Argument is trigger description. It will end up in metadata file so keep it simple.

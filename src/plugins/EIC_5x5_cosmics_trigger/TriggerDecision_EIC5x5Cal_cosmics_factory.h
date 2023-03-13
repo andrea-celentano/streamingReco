@@ -20,6 +20,7 @@ public:
     bool ENABLED;
     int MIN_TRACKS;
     int MAX_TRACKS;
+    int MAX_HITS;
 };
 
 
