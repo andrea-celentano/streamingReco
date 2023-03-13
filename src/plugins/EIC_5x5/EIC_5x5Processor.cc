@@ -95,7 +95,7 @@ void EIC_5x5Processor::Process(const std::shared_ptr<const JEvent> &event) {
     const TriggerDecision *beam_trigger   = nullptr;
     try{ tridasEvent     = event->GetSingle<TridasEvent>();                        } catch(...) {}  // optional
     try{ cosmic_trigger  = event->GetSingle<TriggerDecision>("EIC5x5Cal_cosmics"); } catch(...) {}  // optional
-    try{ beam_trigger    = event->GetSingle<TriggerDecision>("HallDCal_beam");     } catch(...) {}  // optional
+    try{ beam_trigger    = event->GetSingle<TriggerDecision>("EIC5x5Cal_beam");    } catch(...) {}  // optional
 
     /// Lock mutex
     m_root_lock->acquire_write_lock();
