@@ -11,11 +11,12 @@
 
 class EIC_5x5_displayProcessor: public JEventProcessor {
 private:
-    std::string m_tracking_alg = "genfit";
     std::shared_ptr<JGlobalRootLock> m_lock;
     TFile* dest_file;
     TDirectory* dest_dir; // Virtual subfolder inside dest_file used for this specific processor
-    
+    uint32_t m_MaxHists = 100;
+    uint32_t m_NumHists = 0;
+
     /// Declare histograms here
     TH1D* h1d_pt_reco;
 
@@ -29,7 +30,7 @@ public:
         m_lock = app->GetService<JGlobalRootLock>();
 
         /// Set parameters to control which JFactories you use
-        app->SetDefaultParameter("tracking_alg", m_tracking_alg);
+        app->SetDefaultParameter("EIC_5x5_display:MaxHists", m_MaxHists, "Mx. 2D event histograms to create.");
 
         /// Set up histograms
         m_lock->acquire_write_lock();
@@ -40,6 +41,9 @@ public:
     }
 
     void Process(const std::shared_ptr<const JEvent>& event) override {
+
+        // Limit number of 2D hists we create 
+        if( m_NumHists >= m_MaxHists ) return;
 
         // auto fa250hits       = event->Get<fa250VTPMode7Hit>();
         auto calhits         = event->Get<HallDCalHit>();
@@ -66,6 +70,7 @@ public:
         sprintf(hname, "event%04d", event->GetEventNumber() );
         auto h = new TH2F(hname, hname, 5, 0.5, 5.5, 5, 0.5, 5.5);
         for( auto hit : calhits) h->Fill( hit->getHitIX()+1, hit->getHitIY()+1, hit->getHitEnergy());
+        m_NumHists++;
 
         save_dir->cd();
         m_lock->release_lock();
