@@ -137,8 +137,8 @@ void TranslationTable::ReadTranslationTableEIC2023() {
 		TranslationTable::ChannelInfo ch;
 		ch.det_sys = TranslationTable::EIC5x5CAL;
 		ch.EIC5x5CAL = new TranslationTable::HallDCAL_Index_t;
-		ch.EIC5x5CAL->iX=ii/5; // is this correct?
-		ch.EIC5x5CAL->iY=ii%5; // is this correct?
+		ch.EIC5x5CAL->iX=ii%5; // is this correct?
+		ch.EIC5x5CAL->iY=ii/5; // is this correct?
 
 		//insert into TT data - [] operator creates a new entry in map
 		Get_TT()[csc] = ch;
