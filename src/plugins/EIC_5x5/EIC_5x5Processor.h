@@ -45,6 +45,22 @@ public:
     Float_t caltrack_tend[MAX_caltracks];
     Int_t caltrack_Nhits[MAX_caltracks];
 
+    static const Int_t MAX_calclusters=10;
+    TTree *tcalcluster;
+    Int_t Ncalclusters;
+    Int_t calcluster_good[MAX_calclusters];
+    Int_t calcluster_size[MAX_calclusters];
+    Float_t calcluster_energy[MAX_calclusters];
+    Float_t calcluster_fullenergy[MAX_calclusters];
+    Float_t calcluster_seedenergy[MAX_calclusters];
+    Float_t calcluster_time[MAX_calclusters];
+    Float_t calcluster_X[MAX_calclusters];
+    Float_t calcluster_Y[MAX_calclusters];
+    Float_t calcluster_Z[MAX_calclusters];
+    Float_t calcluster_XX[MAX_calclusters];
+    Float_t calcluster_YY[MAX_calclusters];
+
+
     static const Int_t MAX_triggerwords=100;
     TTree *ttrigger;
     Int_t Ntriggerwords;

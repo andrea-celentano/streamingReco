@@ -2,6 +2,7 @@
 #include "EIC_5x5Processor.h"
 
 #include <HallD/HallDCalHit.h>
+#include <HallD/EIC_5x5CalCluster.h>
 #include <EIC_5x5_cosmics_trigger/EIC5x5CalTrack.h>
 #include <Trigger/TriggerDecision.h>
 #include <DAQ/TridasEvent.h>
@@ -69,6 +70,19 @@ void EIC_5x5Processor::Init() {
 	tcaltrack->Branch("tend",    &caltrack_tend,     "tend[Ntracks]/F");
 	tcaltrack->Branch("Nhits",   &caltrack_Nhits,    "Nhits[Ntracks]/I");
 
+    tcalcluster = new TTree("calcluster","EIC5x5CalCluster");
+	tcalcluster->Branch("Nclusters",    &Ncalclusters,          "Nclusters/I");
+	tcalcluster->Branch("good",         &calcluster_good,       "good[Nclusters]/I");
+	tcalcluster->Branch("energy",       &calcluster_energy,     "energy[Nclusters]/F");
+	tcalcluster->Branch("fullenergy",   &calcluster_fullenergy, "fullenergy[Nclusters]/F");
+	tcalcluster->Branch("seedenergy",   &calcluster_seedenergy, "seedenergy[Nclusters]/F");
+	tcalcluster->Branch("time",         &calcluster_time,       "time[Nclusters]/F");
+	tcalcluster->Branch("X",            &calcluster_X,          "X[Nclusters]/F");
+	tcalcluster->Branch("Y",            &calcluster_Y,          "Y[Nclusters]/F");
+	tcalcluster->Branch("Z",            &calcluster_Z,          "Z[Nclusters]/F");
+	tcalcluster->Branch("XX",           &calcluster_XX,         "XX[Nclusters]/F");
+	tcalcluster->Branch("YY",           &calcluster_YY,         "YY[Nclusters]/F");
+
     ttrigger = new TTree("trigger","Tridas and JANA Triggers");
 	ttrigger->Branch("Ntriggerwords",           &Ntriggerwords,           "Ntriggerwords/I");
 	ttrigger->Branch("triggerwords",            &triggerwords,            "triggerwords[Ntriggerwords]/i");
@@ -89,6 +103,7 @@ void EIC_5x5Processor::Process(const std::shared_ptr<const JEvent> &event) {
     auto fa250hits       = event->Get<fa250VTPMode7Hit>();
     auto calhits         = event->Get<HallDCalHit>();
     auto caltracks       = event->Get<EIC5x5CalTrack>();
+    auto calclusters     = event->Get<EIC_5x5CalCluster>("Hdbscan");
 
     const TridasEvent     *tridasEvent    = nullptr;
     const TriggerDecision *cosmic_trigger = nullptr;
@@ -132,6 +147,23 @@ void EIC_5x5Processor::Process(const std::shared_ptr<const JEvent> &event) {
 
     }
     tcaltrack->Fill();
+
+    Ncalclusters = 0;
+    for(auto calcluster : calclusters){
+        calcluster_good[Ncalclusters]        = calcluster->isGoodCluster();
+        calcluster_size[Ncalclusters]        = calcluster->getClusterSize();
+        calcluster_energy[Ncalclusters]      = calcluster->getClusterEnergy();
+        calcluster_fullenergy[Ncalclusters]  = calcluster->getClusterFullEnergy();
+        calcluster_seedenergy[Ncalclusters]  = calcluster->getClusterSeedEnergy();
+        calcluster_time[Ncalclusters]        = calcluster->getClusterTime();
+        calcluster_X[Ncalclusters]           = calcluster->getX();
+        calcluster_Y[Ncalclusters]           = calcluster->getY();
+        calcluster_Z[Ncalclusters]           = calcluster->getZ();
+        calcluster_XX[Ncalclusters]          = calcluster->getXX();
+        calcluster_YY[Ncalclusters]          = calcluster->getYY();
+        if( ++Ncalclusters >= MAX_calclusters ) break;
+    }
+    tcalcluster->Fill();
 
     // Here we are being forgiving if any of the trigger objects are not present.
     Ntriggerwords = 0;
