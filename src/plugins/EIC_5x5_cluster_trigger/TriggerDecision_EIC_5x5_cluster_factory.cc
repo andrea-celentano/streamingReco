@@ -58,7 +58,9 @@ void TriggerDecision_EIC_5x5_cluster_factory::Process(const std::shared_ptr<cons
 	
 	size_t Nclusters = 0;
 	for( auto cluster : clusters ){
-		if( cluster->getClusterEnergy() > E_THRESHOLD ) Nclusters++;
+		if( !cluster->isGoodCluster() ) continue;
+		if( cluster->getClusterEnergy() < E_THRESHOLD ) continue;
+		Nclusters++;
 	}
 
 	bool decision = (Nclusters>=MIN_CLUSTERS) && (Nclusters<=MAX_CLUSTERS);

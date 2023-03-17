@@ -67,6 +67,8 @@ public:
     UInt_t triggerwords[MAX_triggerwords];  // From TridasEvent::triggerwords (i.e. recorded by tridas during acquistion)
     UShort_t cosmic_trigger_decision;       // From decision calculated when this plugin is run (i.e. after acquisition)
     UShort_t cosmic_trigger_id;             //                                     |
+    UShort_t vcosmic_trigger_decision;      //                                     |
+    UShort_t vcosmic_trigger_id;            //                                     |
     UShort_t beam_trigger_decision;         //                                     |
     UShort_t beam_trigger_id;               //                                     |
     UShort_t cluster_trigger_decision;      //                                     |

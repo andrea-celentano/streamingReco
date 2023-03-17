@@ -16,6 +16,7 @@ private:
     TDirectory* dest_dir; // Virtual subfolder inside dest_file used for this specific processor
     uint32_t m_MaxHists = 100;
     uint32_t m_NumHists = 0;
+    std::string m_TAG = "EIC5x5Cal_cosmics"; // EIC5x5Cal_cosmics or EIC5x5Cal_vertical_cosmics
 
     /// Declare histograms here
     TH1D* h1d_pt_reco;
@@ -31,6 +32,7 @@ public:
 
         /// Set parameters to control which JFactories you use
         app->SetDefaultParameter("EIC_5x5_display:MaxHists", m_MaxHists, "Mx. 2D event histograms to create.");
+        app->SetDefaultParameter("EIC_5x5_display:TAG", m_TAG, "Factory tag to use for TriggerDecision objects.");
 
         /// Set up histograms
         m_lock->acquire_write_lock();
@@ -53,7 +55,7 @@ public:
         const TriggerDecision *cosmic_trigger = nullptr;
         // const TriggerDecision *beam_trigger   = nullptr;
         // try{ tridasEvent     = event->GetSingle<TridasEvent>();                        } catch(...) {}  // optional
-        try{ cosmic_trigger  = event->GetSingle<TriggerDecision>("EIC5x5Cal_cosmics"); } catch(...) {}  // optional
+        try{ cosmic_trigger  = event->GetSingle<TriggerDecision>(m_TAG); } catch(...) {}  // optional
         // try{ beam_trigger    = event->GetSingle<TriggerDecision>("HallDCal_beam");     } catch(...) {}  // optional
 
         if( !cosmic_trigger ) return;

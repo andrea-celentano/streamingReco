@@ -88,6 +88,8 @@ void EIC_5x5Processor::Init() {
 	ttrigger->Branch("triggerwords",            &triggerwords,            "triggerwords[Ntriggerwords]/i");
 	ttrigger->Branch("cosmic_trigger_decision", &cosmic_trigger_decision, "cosmic_trigger_decision/s");
 	ttrigger->Branch("cosmic_trigger_id",       &cosmic_trigger_id,       "cosmic_trigger_id/s");
+	ttrigger->Branch("vcosmic_trigger_decision",&vcosmic_trigger_decision,"vcosmic_trigger_decision/s");
+	ttrigger->Branch("vcosmic_trigger_id",      &vcosmic_trigger_id,      "vcosmic_trigger_id/s");
 	ttrigger->Branch("beam_trigger_decision",   &beam_trigger_decision,   "beam_trigger_decision/s");
 	ttrigger->Branch("beam_trigger_id",         &beam_trigger_id,         "beam_trigger_id/s");
 	ttrigger->Branch("cluster_trigger_decision",&cluster_trigger_decision,"cluster_trigger_decision/s");
@@ -109,10 +111,12 @@ void EIC_5x5Processor::Process(const std::shared_ptr<const JEvent> &event) {
 
     const TridasEvent     *tridasEvent     = nullptr;
     const TriggerDecision *cosmic_trigger  = nullptr;
+    const TriggerDecision *vcosmic_trigger = nullptr;
     const TriggerDecision *beam_trigger    = nullptr;
     const TriggerDecision *cluster_trigger = nullptr;
     try{ tridasEvent     = event->GetSingle<TridasEvent>();                        } catch(...) {}  // optional
     try{ cosmic_trigger  = event->GetSingle<TriggerDecision>("EIC5x5Cal_cosmics"); } catch(...) {}  // optional
+    try{ vcosmic_trigger = event->GetSingle<TriggerDecision>("EIC5x5Cal_vertical_cosmic"); } catch(...) {}  // optional
     try{ beam_trigger    = event->GetSingle<TriggerDecision>("EIC5x5Cal_beam");    } catch(...) {}  // optional
     try{ cluster_trigger = event->GetSingle<TriggerDecision>("EIC5x5Cal_cluster"); } catch(...) {}  // optional
 
@@ -173,6 +177,8 @@ void EIC_5x5Processor::Process(const std::shared_ptr<const JEvent> &event) {
     Ntriggerwords = 0;
     cosmic_trigger_decision = 0xFFFF;
     cosmic_trigger_id = 0xFFFF;
+    vcosmic_trigger_decision = 0xFFFF;
+    vcosmic_trigger_id = 0xFFFF;
     beam_trigger_decision = 0xFFFF;
     beam_trigger_id = 0xFFFF;
     cluster_trigger_decision = 0xFFFF;
@@ -182,6 +188,10 @@ void EIC_5x5Processor::Process(const std::shared_ptr<const JEvent> &event) {
             triggerwords[Ntriggerwords] = w;
              if( ++Ntriggerwords >= MAX_triggerwords ) break;
         }
+    }
+    if( vcosmic_trigger ){
+        vcosmic_trigger_decision = vcosmic_trigger->GetDecision();
+        vcosmic_trigger_id       = vcosmic_trigger->GetID();
     }
     if( cosmic_trigger ){
         cosmic_trigger_decision = cosmic_trigger->GetDecision();
