@@ -68,7 +68,9 @@ public:
     UShort_t cosmic_trigger_decision;       // From decision calculated when this plugin is run (i.e. after acquisition)
     UShort_t cosmic_trigger_id;             //                                     |
     UShort_t beam_trigger_decision;         //                                     |
-    UShort_t beam_trigger_id;               //                                     V
+    UShort_t beam_trigger_id;               //                                     |
+    UShort_t cluster_trigger_decision;      //                                     |
+    UShort_t cluster_trigger_id;            //                                     V
 
     
     TFile *fout=nullptr;

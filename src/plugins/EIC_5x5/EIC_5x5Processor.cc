@@ -90,6 +90,8 @@ void EIC_5x5Processor::Init() {
 	ttrigger->Branch("cosmic_trigger_id",       &cosmic_trigger_id,       "cosmic_trigger_id/s");
 	ttrigger->Branch("beam_trigger_decision",   &beam_trigger_decision,   "beam_trigger_decision/s");
 	ttrigger->Branch("beam_trigger_id",         &beam_trigger_id,         "beam_trigger_id/s");
+	ttrigger->Branch("cluster_trigger_decision",&cluster_trigger_decision,"cluster_trigger_decision/s");
+	ttrigger->Branch("cluster_trigger_id",      &cluster_trigger_id,      "cluster_trigger_id/s");
 
 
 	gDirectory->cd();
@@ -105,12 +107,14 @@ void EIC_5x5Processor::Process(const std::shared_ptr<const JEvent> &event) {
     auto caltracks       = event->Get<EIC5x5CalTrack>();
     auto calclusters     = event->Get<EIC_5x5CalCluster>("Hdbscan");
 
-    const TridasEvent     *tridasEvent    = nullptr;
-    const TriggerDecision *cosmic_trigger = nullptr;
-    const TriggerDecision *beam_trigger   = nullptr;
+    const TridasEvent     *tridasEvent     = nullptr;
+    const TriggerDecision *cosmic_trigger  = nullptr;
+    const TriggerDecision *beam_trigger    = nullptr;
+    const TriggerDecision *cluster_trigger = nullptr;
     try{ tridasEvent     = event->GetSingle<TridasEvent>();                        } catch(...) {}  // optional
     try{ cosmic_trigger  = event->GetSingle<TriggerDecision>("EIC5x5Cal_cosmics"); } catch(...) {}  // optional
     try{ beam_trigger    = event->GetSingle<TriggerDecision>("EIC5x5Cal_beam");    } catch(...) {}  // optional
+    try{ cluster_trigger = event->GetSingle<TriggerDecision>("EIC5x5Cal_cluster"); } catch(...) {}  // optional
 
     /// Lock mutex
     m_root_lock->acquire_write_lock();
@@ -171,6 +175,8 @@ void EIC_5x5Processor::Process(const std::shared_ptr<const JEvent> &event) {
     cosmic_trigger_id = 0xFFFF;
     beam_trigger_decision = 0xFFFF;
     beam_trigger_id = 0xFFFF;
+    cluster_trigger_decision = 0xFFFF;
+    cluster_trigger_id = 0xFFFF;
     if( tridasEvent ){
         for( auto w : tridasEvent->triggerWords ) {
             triggerwords[Ntriggerwords] = w;
@@ -185,7 +191,10 @@ void EIC_5x5Processor::Process(const std::shared_ptr<const JEvent> &event) {
         beam_trigger_decision = beam_trigger->GetDecision();
         beam_trigger_id       = beam_trigger->GetID();
     }
-    ttrigger->Fill();
+    if( cluster_trigger ){
+        cluster_trigger_decision = cluster_trigger->GetDecision();
+        cluster_trigger_id       = cluster_trigger->GetID();
+    }    ttrigger->Fill();
 
     m_root_lock->release_lock();
 }
