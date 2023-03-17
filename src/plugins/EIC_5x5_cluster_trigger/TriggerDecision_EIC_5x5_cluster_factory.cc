@@ -4,12 +4,9 @@
 #include <JANA/JFactoryGenerator.h>
 
 #include <HallD/HallDCalHit.h>
+#include <HallD/EIC_5x5CalCluster.h>
 #include "TriggerDecision_EIC_5x5_cluster_factory.h"
 
-
-#include <FT/kmeans/kmeans.h>
-#include <FT/hdbscandir/Hdb.h>
-#include <FT/hdbscandir/hdbscanAlgorithm.h>
 
 
 
@@ -37,9 +34,16 @@ TriggerDecision_EIC_5x5_cluster_factory::TriggerDecision_EIC_5x5_cluster_factory
 void TriggerDecision_EIC_5x5_cluster_factory::Init() {
 
 	ENABLED        = true;
+	TAG            = "Hdbscan";
+	MIN_CLUSTERS   = 1;
+	MAX_CLUSTERS   = 2;
+	E_THRESHOLD    = 0.0;
 
 	mApp->SetDefaultParameter("TRIGGER:EIC_5x5_cluster:ENABLED", ENABLED, "Set to 0 to disable the EIC_5x5_cluster trigger completely (no TriggerDecision objects will be produced).");
-
+	mApp->SetDefaultParameter("TRIGGER:EIC_5x5_cluster:TAG", TAG, "Factory tag to use for EIC_5x5CalCluster objects. (e.g. Hdbscan)");
+	mApp->SetDefaultParameter("TRIGGER:EIC_5x5_cluster:MIN_CLUSTERS", MIN_CLUSTERS, "Minimum number of clusters needed to make a trigger.");
+	mApp->SetDefaultParameter("TRIGGER:EIC_5x5_cluster:MAX_CLUSTERS", MAX_CLUSTERS, "Maximum number of clusters allowed to make a trigger.");
+	mApp->SetDefaultParameter("TRIGGER:EIC_5x5_cluster:E_THRESHOLD",  E_THRESHOLD,  "Minimum energy of single cluster to include in count of clusters to make a trigger.");
 }
 
 //-----------------------------------------------
@@ -49,11 +53,16 @@ void TriggerDecision_EIC_5x5_cluster_factory::Process(const std::shared_ptr<cons
 
 	if( !ENABLED ) return; // allow user to disable this via JANA config. param.
 	
-	// Get track objects from factory
-	// auto blks = event->Get<HallDCalHit>();
+	// Get objects from factory
+	auto clusters = event->Get<EIC_5x5CalCluster>(TAG);
 	
+	size_t Nclusters = 0;
+	for( auto cluster : clusters ){
+		if( cluster->getClusterEnergy() > E_THRESHOLD ) Nclusters++;
+	}
 
-	bool decision = false;
+	bool decision = (Nclusters>=MIN_CLUSTERS) && (Nclusters<=MAX_CLUSTERS);
+
 
 	// Create TriggerDecision object to publish the decision
 	// Argument is trigger description. It will end up in metadata file so keep it simple.

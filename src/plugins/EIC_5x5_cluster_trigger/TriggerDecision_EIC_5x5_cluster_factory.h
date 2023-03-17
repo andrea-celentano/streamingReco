@@ -17,6 +17,10 @@ public:
     void Process(const std::shared_ptr<const JEvent>& event) override;
 
     bool ENABLED;
+    std::string TAG;
+    size_t MIN_CLUSTERS;
+    size_t MAX_CLUSTERS;
+    double E_THRESHOLD;
 };
 
 
